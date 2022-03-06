@@ -63,7 +63,7 @@
 }
 
 hr {
-	border-top: 2px dashed var(--white-2)!important;
+	border-top: 2px solid var(--gray-2)!important;
 	border-bottom: none!important;
 	border-left: none!important;
 	border-right: none!important;

