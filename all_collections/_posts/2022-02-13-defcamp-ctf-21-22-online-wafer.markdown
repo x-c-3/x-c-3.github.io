@@ -67,4 +67,4 @@ Hence, our final payload with everything put into place is:
 
 ![](/assets/images/ctf/defcamp/wafer/6.png)  
 
-`Flag: CTF{3497acdc5cdb795851f334a6c8f401a1e2504b4d05283b6b599e7b6dc42cc200}`
+```Flag: CTF{3497acdc5cdb795851f334a6c8f401a1e2504b4d05283b6b599e7b6dc42cc200}```
