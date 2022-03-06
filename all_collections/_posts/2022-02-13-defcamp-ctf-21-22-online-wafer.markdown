@@ -6,7 +6,7 @@ date:   2022-02-13 14:04:13 +0000
 categories: ctf defcamp
 description: "Writeup of the wafer challenge from the DefCamp CTF 21-22 Online competition"
 ---
-*Useful links: [Jinja 2.10.x documentation](https://jinja.palletsprojects.com/en/2.10.x/templates/), [SSTI Tutorial](https://secure-cookie.io/attacks/ssti/)*  
+*[Challenge](https://app.cyberedu.ro/challenges/f2417e50-8a4d-11ec-88f8-7968b35ff57f/)*  
 
 # Preface
 
