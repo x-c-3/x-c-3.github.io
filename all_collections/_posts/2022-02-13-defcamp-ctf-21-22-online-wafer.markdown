@@ -25,7 +25,7 @@ You might find that entering certain things, such as numbers, causes your input 
 
 <br>
 
-![](/assets/images/ctf/defcamp/wafer/1.png)
+![](1.png)
 
 ![](/assets/images/ctf/defcamp/wafer/2.png)  
 <br>
