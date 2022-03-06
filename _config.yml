@@ -1,12 +1,12 @@
-title: Jekyll Serial Programmer
+title: x-c-3
 markdown: kramdown
 url: ""
 baseurl: "/"
 
 # for atom feed
-author:
-  name: Sharad Raj Singh Maurya
-  email: dev_sharad@outlook.com
+# author:
+#  name: Sharad Raj Singh Maurya
+#  email: dev_sharad@outlook.com
 
 plugins:
   - jemoji
