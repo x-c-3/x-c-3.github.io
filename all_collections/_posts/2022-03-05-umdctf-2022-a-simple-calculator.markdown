@@ -12,27 +12,23 @@ description: "Writeup of the A Simple Calculator challenge from the UMDCTF 2022 
 # TL;DR
 
 Sending a POST request to /calc allows arbitrary Python code to be executed due to the dangerous `eval` function. Use this to read `secrets.py` (where the flag is hidden), bypassing the output being casted to an integer by using the `.index` method to slowly leak the file.  
-<br>
+
 *Edit: It's a lot quicker to just use `ord` on each character.*
 
 ---  
-<br>
 
 ## Inititation
 
 > Calc you later! :)
 
-The website presents itself as a calculator where you can perform simple arithmetic calculations. Going into inspect element and viewing the network tab shows that whenever you enter a calculation, a POST request is sent to the /calc endpoint, with the JSON data of your calculation.
-
-<br>
+The website presents itself as a calculator where you can perform simple arithmetic calculations. Going into inspect element and viewing the network tab shows that whenever you enter a calculation, a POST request is sent to the /calc endpoint, with the JSON data of your calculation.  
 
 ![](/assets/images/ctf/umdctf/a_simple_calculator/1.png)  
 
 ![](/assets/images/ctf/umdctf/a_simple_calculator/2.png)  
-<br>
-<br>
+
 We are given the relevant code in `app.py`:  
-<br>
+
 {% highlight python %}
 @app.route('/calc', methods=['POST'])
 def calc():
@@ -50,22 +46,20 @@ def calc():
     )
     return response
 {% endhighlight %}  
-<br>
+
 Note the "eval". We control the input as we supply the request json, and there seem to be no restrictions on the environment in which the code is executed. Executing random commands supplied by the user seems pretty bad.
 
 ---  
-<br>
+
 ## Exploitation
 
 Now that we have a clear weakness to exploit, let's see what we want to do with it. `secrets.py` has a variable called `FLAG` which looks interesting, so let's try to read the contents of that file.  
-<br>
+
 An issue might be that the output of whatever is `eval`ed is casted to `int`, but as we only want the first line (the line with `FLAG =`), that can be bypassed by using `.index`, which returns the index of a substring in a string, and -1 otherwise.  
-<br>
+
 Therefore, we can slowly build up the file by bruteforcing different characters and seeing if they return 0. If they don't, they aren't at the start of the file and we don't care about them. If they do, then we can add that to a string of known characters that begin the file, and then bruteforce the string + next character, and then the string + next, etc... until we build up the file!  
-<br>
-Here's my code to automate this:
-<br>
-<br>
+
+Here's my code to automate this:  
 
 ```python
 import requests
@@ -105,10 +99,9 @@ while True:
 			print("Done")
 			break
 ```
-<br>
 
----
-<br>
+---  
+
 ## Output
 
 ```
@@ -155,8 +148,6 @@ FLAG = 'UMDCTF{w0w_brut3f0rc3ing_4ctu4lly_w0rks!
 FLAG = 'UMDCTF{w0w_brut3f0rc3ing_4ctu4lly_w0rks!}
 FLAG = 'UMDCTF{w0w_brut3f0rc3ing_4ctu4lly_w0rks!}'
 Done
-```
+```  
 
-<br>
-<br>
 `Flag: UMDCTF{w0w_brut3f0rc3ing_4ctu4lly_w0rks!}`
