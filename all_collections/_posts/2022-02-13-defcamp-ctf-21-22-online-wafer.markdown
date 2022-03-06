@@ -6,11 +6,9 @@ date:   2022-02-13 14:04:13 +0000
 categories: ctf defcamp
 description: "Writeup of the wafer challenge from the DefCamp CTF 21-22 Online competition"
 ---
-*Useful links: [Jinja 2.10.x documentation](https://jinja.palletsprojects.com/en/2.10.x/templates/), [SSTI Tutorial](https://secure-cookie.io/attacks/ssti/)*
+*Useful links: [Jinja 2.10.x documentation](https://jinja.palletsprojects.com/en/2.10.x/templates/), [SSTI Tutorial](https://secure-cookie.io/attacks/ssti/)*  
 
----
-
-## Preface
+# Preface
 
 My favourite and only completed challenge from this year's DefCamp CTF is an excellent example of using server side template injection (SSTI) to execute arbitrary commands on the target's system, as well as bypassing a filter on underscores.
 

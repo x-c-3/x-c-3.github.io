@@ -6,8 +6,7 @@ date:   2022-03-05 23:29:13 +0000
 categories: ctf umdctf
 description: "Writeup of the A Simple Calculator challenge from the UMDCTF 2022 competition"
 ---
-*[Source](https://umdctf.io/files/6489ffca545a610f3080620dc86169c7/A_Simple_Calculator.zip?token=eyJ1c2VyX2lkIjoxMDg1LCJ0ZWFtX2lkIjo2NjksImZpbGVfaWQiOjcwfQ.YiPyIw.mxMGnS0K6NK8cFZG422WJ8_wTmQ), [Challenge](https://calculator-3tjck.ondigitalocean.app/)*
-<br>
+*[Source](https://umdctf.io/files/6489ffca545a610f3080620dc86169c7/A_Simple_Calculator.zip?token=eyJ1c2VyX2lkIjoxMDg1LCJ0ZWFtX2lkIjo2NjksImZpbGVfaWQiOjcwfQ.YiPyIw.mxMGnS0K6NK8cFZG422WJ8_wTmQ), [Challenge](https://calculator-3tjck.ondigitalocean.app/)*  
 
 # TL;DR
 
@@ -99,8 +98,6 @@ while True:
 			print("Done")
 			break
 ```
-
-## Output
 
 ```
 FLAG = 'U
