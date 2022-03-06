@@ -8,9 +8,7 @@ description: "Writeup of the A Simple Calculator challenge from the UMDCTF 2022 
 ---
 *[Challenge](https://calculator-3tjck.ondigitalocean.app/), [Source](https://umdctf.io/files/6489ffca545a610f3080620dc86169c7/A_Simple_Calculator.zip?token=eyJ1c2VyX2lkIjoxMDg1LCJ0ZWFtX2lkIjo2NjksImZpbGVfaWQiOjcwfQ.YiPyIw.mxMGnS0K6NK8cFZG422WJ8_wTmQ)*  
 
-# TL;DR
-
-Sending a POST request to /calc allows arbitrary Python code to be executed due to the dangerous `eval` function. Use this to read `secrets.py` (where the flag is hidden), bypassing the output being casted to an integer by using the `.index` method to slowly leak the file.  
+**TL;DR**: Sending a POST request to /calc allows arbitrary Python code to be executed due to the dangerous `eval` function. Use this to read `secrets.py` (where the flag is hidden), bypassing the output being casted to an integer by using the `.index` method to slowly leak the file.  
 
 *Edit: It's a lot quicker to just use `ord` on each character.*
 

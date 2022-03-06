@@ -8,8 +8,6 @@ description: "Writeup of the wafer challenge from the DefCamp CTF 21-22 Online c
 ---
 *[Challenge](https://app.cyberedu.ro/challenges/f2417e50-8a4d-11ec-88f8-7968b35ff57f/)*  
 
-# Preface
-
 My favourite and only completed challenge from this year's DefCamp CTF is an excellent example of using server side template injection (SSTI) to execute arbitrary commands on the target's system, as well as bypassing a filter on underscores.
 
 This will be showing how I altered the payload taken from [here](https://secure-cookie.io/attacks/ssti/) to achieve SSTI; all the concepts are the same. Please check it out!
