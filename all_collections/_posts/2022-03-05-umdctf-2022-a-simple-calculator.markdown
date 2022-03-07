@@ -26,7 +26,7 @@ The website presents itself as a calculator where you can perform simple arithme
 
 We are given the relevant code in `app.py`:  
 
-{% highlight python %}
+```python
 @app.route('/calc', methods=['POST'])
 def calc():
     val = 0
@@ -42,7 +42,7 @@ def calc():
         mimetype='application/json'
     )
     return response
-{% endhighlight %}  
+```  
 
 Note the "eval". We control the input as we supply the request json, and there seem to be no restrictions on the environment in which the code is executed. Executing random commands supplied by the user seems pretty bad.  
 
