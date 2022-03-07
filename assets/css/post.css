@@ -129,6 +129,7 @@ main {
   font-weight: bold;
 }
 .content del {
+  filter: brightness(0.5);
   text-decoration: line-through;
 }
 .content ul {
