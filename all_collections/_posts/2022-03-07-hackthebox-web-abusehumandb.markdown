@@ -113,7 +113,7 @@ async function check(char) {
         s.onerror = () => {reject(char);};
 
         document.head.appendChild(s);
-        
+
     });
 }
 
