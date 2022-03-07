@@ -3,8 +3,8 @@ layout: post
 title:  "wafer"
 author: "DefCamp CTF 21-22 Online (Lucian Ioan Nitescu)"
 date:   2022-02-13 14:04:13 +0000
-categories: ctf defcamp
-description: "Writeup of the wafer challenge from the DefCamp CTF 21-22 Online competition"
+categories: ctf defcamp web
+description: "Writeup of the \"wafer\" web challenge from the DefCamp CTF 21-22 Online competition"
 ---
 *[Challenge](https://app.cyberedu.ro/challenges/f2417e50-8a4d-11ec-88f8-7968b35ff57f/)*  
 
@@ -17,7 +17,7 @@ This will be showing how I altered the payload taken from [here](https://secure-
 ## Initiation
 
 > Of course I included this protocol in my testing methodology and no vulnerabilities were found.
-> 127.0.0.1 1337  
+> 127.0.0.1 1337
 
 You might find that entering certain things, such as numbers, causes your input to be returned to you, and entering nothing/simple arithmetic yields interesting results:  
 
