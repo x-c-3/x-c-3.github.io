@@ -76,7 +76,7 @@ Hmm. Well, what about the other endpoint, `/api/entries/search`? In the above co
 
 The 200 and 404 response codes trigger the `onload` and `onerror` event handlers respectively. We can report any webpage to the admins, so why don't we report a webpage that iterates through a list of characters and queries `/api/entries/search?q=` with each character until it finds a 200 status code, distinguishing between invalid and valid characters with these event handlers? We could then append the character to a string containing what we currently know the flag to be and repeat until we build up the flag!  
 
-I was stuck here for quite a bit because my JavaScript skills are quite lacking, so I decided to read this [writeup](https://skelter.hashnode.dev/htb-abusehumandb-writeup) on the same challenge by skelter. My code is largely based on theirs, and it was a great learning experience for me, so if you were as clueless as me in how to implement this then I've added comments to the code to try and help explain. Here it is:
+I was stuck here for quite a bit because my JavaScript skills are quite lacking, so I decided to read this [writeup](https://skelter.hashnode.dev/htb-abusehumandb-writeup) on the same challenge by skelter. My code is largely based on theirs, and it was a great learning experience for me, so if you were as clueless as me in how to implement this then I've added comments to the code to try and help explain. Here it is: cghfhf
 
 ```js
 var url = "http://127.0.0.1:1337/api/entries/search?q=";
