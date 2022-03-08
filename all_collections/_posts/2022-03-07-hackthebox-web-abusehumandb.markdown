@@ -4,7 +4,7 @@ title:  "AbuseHumanDB"
 author: "Hack The Box (Itasahobby, Rayhan0x01)"
 date:   2022-03-05 23:29:13 +0000
 categories: ctf hackthebox web
-description: "Writeup of the \"AbuseHumanDB\" web challenge from Hack The Box"
+description: "there is an impostor _____ __"
 ---
 *[Challenge](https://app.hackthebox.com/challenges/abusehumandb), [Source](https://www.hackthebox.com/api/v4/challenge/download/260) (password `hackthebox`)*  
 
