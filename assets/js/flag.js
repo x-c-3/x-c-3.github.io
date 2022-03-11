@@ -5,3 +5,4 @@
 	$(".article-title")[0].innerText = flag;
 	document.title = `x-c-3 | ${flag}`;
 })();
+// 257|a is a sha512 magic hash btw
