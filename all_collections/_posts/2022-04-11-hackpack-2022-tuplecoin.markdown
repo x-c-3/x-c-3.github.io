@@ -73,10 +73,10 @@ def sign(self, secret_key: bytes) -> AuthenticatedTransaction:
 The way that the server verifies that the transactions haven't been tampered with at the `commit` endpoint is by smooshing together all the details (stored in `tuco_smash`), then generating a SHA256 hash of that (stored in `tuco_hash`). Usually, this would probably not be an issue, but the way they're putting together all the details is actually a massive problem. Consider these two scenarios:  
 
 from_acct: <span style="color:yellow">31415926</span>
-to_acct: <span style="color:green">54321</span> (any number that begins with a 5 and 2nd digit non-zero)
+to_acct: <span style="color:red">54321</span> (any number that begins with a 5 and 2nd digit non-zero)
 num_tuco: <span style="color:green">111</span> (irrelevant)  
 
-By the `serialize()` function, all of these values would be concatenated to get the value that will be hashed, which would look like this: <span style="color:yellow">31415926</span><span style="color:green">54321</span><span style="color:green">111</span>. And, if we sent a request to the `certify` endpoint with these values, the server would interpret it as it is: a transaction from an account that **is not Tuco's**, and hence generate a signature for it:  
+By the `serialize()` function, all of these values would be concatenated to get the value that will be hashed, which would look like this: <span style="color:yellow">31415926</span><span style="color:red">54321</span><span style="color:green">111</span>. And, if we sent a request to the `certify` endpoint with these values, the server would interpret it as it is: a transaction from an account that **is not Tuco's**, and hence generate a signature for it:  
 
 ```json
 {
@@ -92,13 +92,13 @@ By the `serialize()` function, all of these values would be concatenated to get 
 ...so all is good, until you consider this alternative scenario:  
 
 from_acct: <span style="color:yellow">314159265</span> (Tuco's account number)
-to_acct: <span style="color:green">4321</span> (minus the 5 at the start)
+to_acct: <span style="color:red">4321</span> (minus the 5 at the start)
 num_tuco: <span style="color:green">111</span> (same as before)  
 
 Let's compare the values to be hashed:  
 
-<span style="color:yellow">31415926</span><span style="color:green">54321</span><span style="color:green">111</span> (first one)
-<span style="color:yellow">314159265</span><span style="color:green">4321</span><span style="color:green">111</span> (second one)  
+<span style="color:yellow">31415926</span><span style="color:red">54321</span><span style="color:green">111</span> (first one)  
+<span style="color:yellow">314159265</span><span style="color:red">4321</span><span style="color:green">111</span> (second one)  
 
 They are the exact same, and as they are being hashed with the same secret, they would generate the same hash! Now it doesn't matter that we can't directly get a signature for this transaction due to it being from Tuco's account, as we know that it will generate the same one as before. Therefore, we can just send a request to the `commit` endpoint with our doctored values and pre-verified signature, and we're good to go!  
 
