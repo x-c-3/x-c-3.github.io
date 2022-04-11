@@ -3,7 +3,7 @@ layout: post
 title:  "wafer"
 author: "DefCamp CTF 21-22 Online (Lucian Ioan Nitescu)"
 date:   2022-02-13 14:04:13 +0000
-categories: ctf defcamp web
+categories: ctf defcamp misc
 description: "ssti on a silver platter...almost"
 ---
 *[Challenge](https://app.cyberedu.ro/challenges/f2417e50-8a4d-11ec-88f8-7968b35ff57f/)*  
