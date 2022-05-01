@@ -127,7 +127,7 @@ main {
 .content h5 > a,
 .content h6 > a {
   color: dimgrey;
-  border-bottom: 1px solid peru;
+  border-bottom: 3px solid peru;
 }
 .content blockquote {
   padding-left: 1.42188rem;
