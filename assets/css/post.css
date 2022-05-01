@@ -27,6 +27,7 @@ body {
   color: var(--white-2);
   background-color: var(--gray-6);
   font-family: "JetBrains Mono", monospace;
+  font-size: 95%;
   line-height: 0.5rem;
   background-color: var(--gray-5);
 }
@@ -46,7 +47,12 @@ header {
 main {
   margin: 0 auto;
   /*max-width: 650px;*/
-  padding: 3rem 10% 4rem 10%;
+  padding: 3rem 5% 4rem 5%;
+}
+@media only screen and (min-width: 1025px) {
+  main {
+    padding: 3rem 17.5% 4rem 20%;
+  }
 }
 .article {
   margin-bottom: 3rem;
@@ -180,7 +186,7 @@ main {
 .content,
 .content div,
 .content div pre,
-/*.content div pre code*/ {
+.content div pre code {
   overflow-x: auto !important;
 }
 
@@ -193,9 +199,12 @@ main {
 .content code {
   padding: 3px 5px;
   color: var(--white-2);
-  white-space: break-spaces;
-  overflow-wrap: break-word;
+  /*white-space: break-spaces;
+  overflow-wrap: break-word;*/
+  white-space: pre;
+  overflow-x: auto !important;
   background-color: var(--gray-3);
+
 }
 
 /* lbox */
