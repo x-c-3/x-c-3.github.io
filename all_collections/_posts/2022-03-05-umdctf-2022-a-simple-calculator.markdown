@@ -14,7 +14,7 @@ description: "i know exec is pretty bad, but surely not eval?"
 
 ---  
 
-## Inititation
+## # Inititation
 
 > Calc you later! :)
 
@@ -48,7 +48,7 @@ Note the "eval". We control the input as we supply the request json, and there s
 
 ---  
 
-## Exploitation
+## # Exploitation
 
 Now that we have a clear weakness to exploit, let's see what we want to do with it. `secrets.py` has a variable called `FLAG` which looks interesting, so let's try to read the contents of that file.  
 

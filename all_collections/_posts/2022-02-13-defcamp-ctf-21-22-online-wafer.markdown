@@ -14,7 +14,7 @@ This will be showing how I altered the payload taken from [here](https://secure-
 
 ---  
 
-## Initiation
+## # Initiation
 
 > Of course I included this protocol in my testing methodology and no vulnerabilities were found.
 > 127.0.0.1 1337
@@ -29,7 +29,7 @@ This confirms that we are dealing with SSTI, and it seems that our input was bei
 
 ---  
 
-## Exploitation
+## # Exploitation
 
 Let's try copying and pasting in this [default SSTI payload](https://secure-cookie.io/attacks/ssti/).
 ```python
