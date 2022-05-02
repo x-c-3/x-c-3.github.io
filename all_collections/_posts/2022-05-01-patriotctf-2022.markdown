@@ -6,6 +6,9 @@ date:   2022-05-01 00:00:00 +0000
 categories: ctf patriotctf web programming crypto
 description: "its the ctf"
 ---
+
+{% raw %}
+
 *[Challenges](https://pctf.competitivecyber.club/challenges)*  
 
 Here are my writeups from PatriotCTF 2022! I came 26th overall, which was higher than I was expecting to get doing almost only the web challenges (which were incredibly fun). Rabbit holes and failed attempted challenges will be at the end. Please enjoy!
@@ -132,7 +135,6 @@ I got first blood on this challenge! This was just an SSTI challenge in Jinja2 w
 >
 > Author: NihilistPenguin (Daniel Getter)
 
-{% raw %}
 I got first blood on this challenge as well! This was a step up from the previous challenge and was unlike any SSTI challenge I'd seen before. The filters were a bit harsher, with `{{` and `}}` filtered out, but luckily `{%` and `%}` weren't, so we could make use of Jinja tags. Additionally, `.` was no longer filtered, so we could now use some common Jinja2 SSTI payloads, such as:
 
 ```py
@@ -222,7 +224,6 @@ with zipfile.ZipFile("exploit.zip", "w") as zf:
 ```
 
 Uploading this now will overwrite the `upload.html` file with a file containing our malicious Jinja templating code, then render `upload.html`, evaluating our code and printing out the contents of `admin.html`, as required.
-{% endraw %}
 
 ---
 
@@ -459,3 +460,5 @@ print(conn.recvline())
 **Merkle-Derkle**: I spent 4 hours on that challenge!!! It was mostly due to me having never done this sort of attack before, and also UTF-8 splitting up the bytes in the extension payload, which I didn't realise for a very long time. The horrible script is a reflection of this, and I hope that I will never feel so desperate as to use `ii` to refer to an index ever again.  
 
 Thank you very much for reading.
+
+{% endraw %}
