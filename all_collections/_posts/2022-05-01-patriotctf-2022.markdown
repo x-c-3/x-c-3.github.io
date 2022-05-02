@@ -19,7 +19,7 @@ Here are my writeups from PatriotCTF 2022! I came 26th overall, which was higher
 
 # Web
 
-## # Apocalypse Security - 3
+## Apocalypse Security - 3
 
 > Good Job bypassing the filter, can you log in as admin now? We were able to find the filter script.  
 >
@@ -91,7 +91,7 @@ After you get the password, submit another request but replace the brute-forcing
 
 ---
 
-## # Chewy or Crunchy
+## Chewy or Crunchy
 
 > I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can get into the admin user, I will give you a flag. Feel free to send me a message, I try to respond quickly!  
 >
@@ -99,17 +99,11 @@ After you get the password, submit another request but replace the brute-forcing
 
 From the challenge description and due to the fact that you can send messages to the mysterious entity `admin`, this seems like an XSS challenge, so let's try to steal the admin's cookies.  
 
-There is a filter on all messages that blocks these characters: `.>{}`, and a payload that works is
-
-```html
-<img src=x onerror="javascript:ghurwiejiowrobw" 
-```
-
-...as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag. Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
+There is a filter on all messages that blocks these characters: `.>{}`, and a payload that works is `<img src=x onerror="javascript:ghurwiejiowrobw" `, as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag. Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
 
 ---
 
-## # Not So Secret
+## Not So Secret
 
 > I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can get into the admin user, I will give you a flag.
 >
@@ -125,7 +119,7 @@ I got first blood on this challenge! This was just an SSTI challenge in Jinja2 w
 
 ---
 
-## # Mr. O
+## Mr. O
 
 > I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can view the admin.html page, I will give you a flag.
 >
@@ -185,7 +179,7 @@ while True:
 
 ---
 
-## # ZaaS
+## ZaaS
 
 > I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can view the admin.html page, I will give you a flag.
 >
@@ -229,7 +223,7 @@ Uploading this now will overwrite the `upload.html` file with a file containing 
 
 # Crypto
 
-## # Merkle-Derkle
+## Merkle-Derkle
 
 > I'm new to web development, so I'm still trying to figure out how to properly secure and authenticate user sessions. If you find a way to authenticate as admin, I will give you the flag. To help you in your endeavors, I will provide you with the main app source code.
 >
@@ -312,7 +306,7 @@ Here's a [really good article](https://journal.batard.info/post/2011/03/04/explo
 
 I'm going to skim over both of these challenges as they followed largely the same format.
 
-## # Big Shaq
+## Big Shaq
 
 > Are you on Big Shaq's math level? Solve 5 questions before the time runs out to see if you're worthy.
 >
@@ -402,7 +396,7 @@ print(conn.recvline())
 
 ---
 
-## # CaptSHA
+## CaptSHA
 
 > This service requires some sort of captcha to access it. Can you get in?
 >
@@ -451,7 +445,7 @@ print(conn.recvline())
 
 ---
 
-# # Extra Notes
+# Extra Notes
 
 **TaaS**: I was stuck on this for quite a while, trying to find distinctions between tar and zip files, as well as trying to see how os.remove on an arbitrary file could possibly lead to RCE (I tried deleting db.sqlite to see if I could then create a new admin account, deleting upload.py, etc.). The intended solution was a race condition and can be read [here](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/TaaS).  
 

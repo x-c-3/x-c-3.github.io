@@ -12,7 +12,7 @@ description: "steam"
 
 ---  
 
-## # Inititation
+## Inititation
 
 > TupleCoin is launching their eponymous cryptocurrency today, and their flamboyant and capricious CEO is challenging you to bring home a bug bounty. Can you crack the crypto?!
 
@@ -45,7 +45,7 @@ Server: uvicorn
 
 ---  
 
-## # Exploitation
+## Exploitation
 
 The solution to this problem is actually incredibly similar to the one in this [very interesting video](https://www.youtube.com/watch?v=4D-6nWIRZLU), which explores this same type of vulnerability in Steam to generate infinite funds!  
 

@@ -12,7 +12,7 @@ description: "there is an impostor _____ __"
 
 ---  
 
-## # Inititation
+## Inititation
 
 > We discovered a mysterious web portal that we believe are operated by aliens! Can you find out what they don't want us to see?
 
@@ -72,7 +72,7 @@ Hmm. Well, what about the other endpoint, `/api/entries/search`? In the above co
 
 ---  
 
-## # Exploitation
+## Exploitation
 
 The 200 and 404 response codes trigger the `onload` and `onerror` event handlers respectively. We can report any webpage to the admins, so why don't we report a webpage that iterates through a list of characters and queries `/api/entries/search?q=` with each character until it finds a 200 status code, distinguishing between invalid and valid characters with these event handlers? We could then append the character to a string containing what we currently know the flag to be and repeat until we build up the flag!  
 

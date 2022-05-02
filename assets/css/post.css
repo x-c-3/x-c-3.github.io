@@ -46,7 +46,7 @@ header {
 }
 
 .sidebar {
-  padding: 5rem 0% 4rem 2.5%;
+  padding: 5rem 0% 4rem 10%;
   width: 15%;
   height: 80vh;
   float: left;
@@ -65,10 +65,11 @@ header {
   max-width: 80%;
   padding: 2px 5px;
   color: dimgrey;
+  transition: transform 150ms;
   animation: fade-sidebar 0.5s ease-out 0.125s 1 backwards;
 }
-
 .sidebar .sidebar-content a:hover {
+  transform: translateX(5px);
   font-weight: bold;
 }
 
@@ -114,10 +115,11 @@ main {
 }
 @media only screen and (min-width: 1025px) {
   main {
-    padding: 3rem 17.5% 4rem 0;
+    padding: 3rem 17.5% 4rem 0%;
   }
+  /* TODO // fix this godawful hardcoded padding */
   footer {
-    padding: 0 0 0 21.5%;
+    padding: 0 0 0 30.5%;
   }
 }
 
@@ -248,12 +250,26 @@ main {
   max-width: 100%;
   margin: 1rem 0;
 }
+.content mark {
+  background-color: var(--gray-2);
+  white-space: break-spaces;
+}
 
+/* wrap if inline code only */
+.content code {
+  padding: 3px 5px;
+  color: var(--white-2);
+  /*white-space: break-spaces;
+  overflow-wrap: break-word;*/
+  white-space: break-spaces;
+  background-color: var(--gray-3);
+}
 /* pre , code */
 /*.content,*/
 .content div,
 .content div pre,
 .content div pre code {
+  white-space: pre;
   overflow-x: auto !important;
 }
 
@@ -261,15 +277,6 @@ main {
   background: var(--gray-3) !important;
   padding: 1rem 2rem;
   margin-bottom: 1.75rem;
-}
-
-.content code {
-  padding: 3px 5px;
-  color: var(--white-2);
-  /*white-space: break-spaces;
-  overflow-wrap: break-word;*/
-  white-space: pre;
-  background-color: var(--gray-3);
 }
 
 /* lbox */

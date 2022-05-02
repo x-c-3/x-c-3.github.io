@@ -1,25 +1,17 @@
-const allHeaders = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-fragmentedHeaders = [];
+const contentHeaders = document.querySelectorAll(".content h1, .content h2, .content h3, .content h4, .content h5, .content h6");
 
-// Adding fragments to all headers starting with "#""
-allHeaders.forEach((header) => {
-	if (header.innerHTML.startsWith("#")) {
-		header.id = header.id.slice(1);
-		header.innerHTML = header.innerHTML.replace(
-			"#", `<a href="#${header.id}">#</a>`
-		)
-		fragmentedHeaders.push(header);
-	}
-});
+contentHeaders.forEach((header) => {
 
-// Adding fragmented headers to sidebar
-fragmentedHeaders.forEach((header) => {
+	// Adding fragment to header
+	header.innerHTML = `<a href="#${header.id}">#</a> ${header.innerHTML}`
+
+	// Adding fragment to sidebar
 	sidebarElement = document.createElement("a");
 	sidebarElement.href = `#${header.id}`;
-	sidebarElement.innerHTML = `. ${header.innerText}`.replace(
+	sidebarElement.innerHTML = `. <span style="color:var(--white-${header.tagName[1]})">${header.innerText}</span>`.replace(
 		"#", '<span style="color:orange;">#</span>'
 	).replace(
-		".", '<span style="color:dimgrey;">.</span>'
+		".", `<span style="color:dimgrey;">${" ".repeat(header.tagName[1])}.</span>`
 	);
 	$(".sidebar > .sidebar-content")[0].appendChild(sidebarElement);
 });
