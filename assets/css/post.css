@@ -269,9 +269,7 @@ main {
   /*white-space: break-spaces;
   overflow-wrap: break-word;*/
   white-space: pre;
-  overflow-x: auto !important;
   background-color: var(--gray-3);
-
 }
 
 /* lbox */

@@ -96,7 +96,13 @@ After you get the password, submit another request but replace the brute-forcing
 
 From the challenge description and due to the fact that you can send messages to the mysterious entity `admin`, this seems like an XSS challenge, so let's try to steal the admin's cookies.  
 
-There is a filter on all messages that blocks these characters: `.>{}`, and a payload that works is `<img src=x onerror="javascript:ghurwiejiowrobw" `, as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag. Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
+There is a filter on all messages that blocks these characters: `.>{}`, and a payload that works is
+
+```html
+<img src=x onerror="javascript:ghurwiejiowrobw" 
+```
+
+...as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag. Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
 
 ---
 
@@ -127,7 +133,13 @@ I got first blood on this challenge! This was just an SSTI challenge in Jinja2 w
 > Author: NihilistPenguin (Daniel Getter)
 
 {% raw %}
-I got first blood on this challenge as well! This was a step up from the previous challenge and was unlike any SSTI challenge I'd seen before. The filters were a bit harsher, with `{{` and `}}` filtered out, but luckily `{%` and `%}` weren't, so we could make use of Jinja tags. Additionally, `.` was no longer filtered, so we could now use some common Jinja2 SSTI payloads, such as `cycler.__init__.__globals__.os.popen('id').read()`, to achieve RCE. The payload I used in the actual competition looked like this:
+I got first blood on this challenge as well! This was a step up from the previous challenge and was unlike any SSTI challenge I'd seen before. The filters were a bit harsher, with `{{` and `}}` filtered out, but luckily `{%` and `%}` weren't, so we could make use of Jinja tags. Additionally, `.` was no longer filtered, so we could now use some common Jinja2 SSTI payloads, such as:
+
+```py
+cycler.__init__.__globals__.os.popen('id').read()
+```
+
+...to achieve RCE. The payload I used in the actual competition looked like this:
 
 ```py
 "".__class__.__base__.__subclasses__().__getitem__(200).__init__.__globals__.sys.modules.os.popen("id").read()
