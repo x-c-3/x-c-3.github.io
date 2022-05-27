@@ -6,6 +6,7 @@ date:   2022-04-11 14:26:00 +0000
 categories: ctf hackpack web
 description: "steam"
 ---
+
 *[Challenge](https://tuplecoin.cha.hackpack.club)*  
 
 **TL;DR**: The flag is revealed when TupleCoins are successfully withdrawn from Tuco's account, and normally, the player is not allowed to withdraw TupleCoins from this account. To ensure that users cannot arbitrarily modify transactions, details of any transactions are hashed with a secret. However, as the details are concatenated end-on-end, one can send a specially crafted request that has the same hash as a valid request but actually withdraws TupleCoins from Tuco's account.  

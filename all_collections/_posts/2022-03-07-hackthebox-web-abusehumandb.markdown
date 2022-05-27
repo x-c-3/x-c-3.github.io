@@ -6,6 +6,7 @@ date:   9999-03-07 23:29:13 +0000
 categories: ctf hackthebox web
 description: "there is an impostor _____ __"
 ---
+
 *[Challenge](https://app.hackthebox.com/challenges/abusehumandb), [Source](https://www.hackthebox.com/api/v4/challenge/download/260) (password `hackthebox`)*  
 
 **TL;DR**: The flag is stored in a database and the `/api/entries/search?q=` endpoint allows users to query the database. Only localhost can query records with `approved=0`, and the flag is one such record. Use the report URL function to report a webpage with JavaScript code that repeatedly sends requests to `/api/entries/search?q=`; the response code leaks information about the next character in the flag, and hence when the admin visits that page, the flag can be slowly built up by concatenating characters that elicit a valid response code to the known flag and sending this information to a webhook.  
