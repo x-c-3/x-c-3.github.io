@@ -7,7 +7,7 @@ categories: ctf flctf web
 description: "a contrived solution to a contrived problem"
 ---
 
-*Challenge link not shared, sorry!*
+*[Challenge](http://freeloadingctf.sytes.net:9010/) (very likely to go down soon(tm))*
 
 This is my writeup of my own challenge from my own mini-CTF that I hosted at my school, intended to be primarily a documentation-reading challenge. This should be a free flag for any participants. I won't be directly providing the flag, but following all the steps listed below will yield the flag hopefully :)
 
