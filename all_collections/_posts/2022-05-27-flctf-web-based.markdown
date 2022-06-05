@@ -7,9 +7,9 @@ categories: ctf flctf web
 description: "a contrived solution to a contrived problem"
 ---
 
-*[Challenge](https://app.cyberedu.ro/challenges/f2417e50-8a4d-11ec-88f8-7968b35ff57f/)*  
+*Challenge link not shared, sorry!*
 
-This is my writeup of my own challenge from my own mini-CTF that I hosted, intended to be primarily a documentation-reading challenge. I won't be directly providing the flag, but following all the steps listed below will yield the flag :)
+This is my writeup of my own challenge from my own mini-CTF that I hosted at my school, intended to be primarily a documentation-reading challenge. This should be a free flag for any participants. I won't be directly providing the flag, but following all the steps listed below will yield the flag hopefully :)
 
 ---  
 
