@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,300;0,400;0,800;1,100;1,300;1,400;1,800&display=swap");
 
-:root {
+/*why is this here this does nothing*/
+/*:root {
   --gray-1: #3f3f3f;
   --gray-2: #32353a;
   --gray-3: #25282c;
@@ -8,8 +9,8 @@
   --gray-5: #151618;
   --gray-6: #111111;
   --white-1: #eeeeee;
-  --white-2: #a9abb3;
-}
+  --white-2: #d9dbe3;
+}*/
 * {
   font-family: inherit;
   text-decoration: none;
@@ -46,7 +47,7 @@ header {
 }
 
 .sidebar {
-  padding: 5rem 4% 4rem 4%;
+  padding: 4.6rem 1% 4rem 5%;
   width: 15%;
   height: 80vh;
   float: left;
@@ -56,21 +57,42 @@ header {
   flex-direction: column;
 }
 
-.sidebar .sidebar-content a {
+.sidebar .sidebar-content li {
+  margin: 15px 0;
+  line-height: 2rem;
+}
+
+/*TO DO:  fix this mess one day*/
+.sidebar .sidebar-content ul {
+  list-style: none;
+  padding: 0px;
+  animation: fade-sidebar 0.5s ease-out 0.125s 1 backwards;
+}
+.sidebar .sidebar-content ul li {
+  transition: transform 150ms;
+}
+.sidebar .sidebar-content ul li:before{
+  content: '\0023';
+  margin: 0 1em;
+  float: left;
+  margin-left: -9px;
+  transform: translateY(2px);
+  color: orange;
+}
+.sidebar .sidebar-content ul li:hover {
+  transform: translateX(5px);
+  font-weight: bold;
+}
+
+.sidebar .sidebar-content li > a {
   display: block;
-  text-overflow: ellipsis;
+  /*text-overflow: ellipsis;*/
   font-style: italic;
   overflow: hidden;
-  white-space: pre;
+  white-space: initial;
   max-width: 80%;
   padding: 2px 5px;
   color: dimgrey;
-  transition: transform 150ms;
-  animation: fade-sidebar 0.5s ease-out 0.125s 1 backwards;
-}
-.sidebar .sidebar-content a:hover {
-  transform: translateX(5px);
-  font-weight: bold;
 }
 
 .content {
