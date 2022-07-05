@@ -63,6 +63,6 @@ Scary? Not really. This attack really only applies if the only blatant differenc
 
 In other words, this attack is sort of like a "win more" card in a trading card game: it doesn't help if they have the normal defences, but in the case that they don't, there's an off-chance that it might help you.  
 
-In some other other words, it's a CTF challenge.  
+In some other words, it's a CTF challenge.  
 
 However, if there is ever a similar feature implemented with `window.open`, this sort of technique could be more impactful. And also mitigated with the `Cross-Origin-Opener-Policy`. There is a bit of care to be taken here.
