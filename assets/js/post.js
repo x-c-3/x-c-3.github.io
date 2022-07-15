@@ -14,6 +14,6 @@ contentHeaders.forEach(header => {
 	$(".sidebar > .sidebar-content > .sidebar-list")[0].appendChild(sidebarElement);
 
 	// Adding fragment to header
-	header.innerHTML = `<a href="#${header.id}">#</a> ${header.innerHTML}`
+	header.innerHTML = `<a href="#${header.id}" style="font-weight: bold; font-style: normal;">#</a> ${header.innerHTML}`
 
 });

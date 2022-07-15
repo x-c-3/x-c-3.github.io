@@ -192,22 +192,28 @@ main {
   padding: 0;
 }
 .content h1 {
-  font-size: 2.5rem;
+  font-size: 1.7rem;
 }
 .content h2 {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
+  font-weight: normal;
 }
 .content h3 {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
+  font-weight: normal;
+  font-style: italic;
 }
 .content h4 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
+  font-weight: normal;
 }
 .content h5 {
   font-size: 1.2rem;
+  font-weight: normal;
 }
 .content h6 {
   font-size: 1rem;
+  font-weight: normal;
 }
 .content h1,
 .content h2,
@@ -223,8 +229,8 @@ main {
 .content h4 > a,
 .content h5 > a,
 .content h6 > a {
-  color: dimgrey;
-  border-bottom: 3px solid peru;
+  color: peru;
+  border-bottom: 0px;
 }
 .content blockquote {
   padding-left: 1.42188rem;
@@ -288,7 +294,8 @@ main {
 }
 /* pre , code */
 /*.content,*/
-.content div,
+.content mjx-container,
+.content div .highlight,
 .content div pre,
 .content div pre code {
   white-space: pre;
