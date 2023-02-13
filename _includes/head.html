@@ -1,0 +1,26 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:title" content="{{site.title}} | {{page.title}}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://x-c-3.github.io/" />
+  <meta property="og:description" content="{{page.description}}" />
+  <meta name="theme-color" content="#151618">
+  <title>{{site.title}} | {{page.title}}</title>
+  {% if page.layout == "post" %}
+  <link rel="stylesheet" href="/assets/css/post.css" />
+  <link rel="stylesheet" href="/assets/css/syntax.css" />
+  <script defer src="/assets/js/lbox.js"></script>
+  <script defer src="/assets/js/post.js"></script>
+  {% else %}
+  <link rel="stylesheet" href="/assets/css/blog.css" />
+  {%endif%}
+  <link rel="stylesheet" href="/assets/css/common.css" />
+  <script src="/assets/js/categories.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- MathJax -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" integrity="sha512-6FaAxxHuKuzaGHWnV00ftWqP3luSBRSopnNAA2RvQH1fOfnF/A1wOfiUWF7cLIOFcfb1dEhXwo5VG3DAisocRw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
